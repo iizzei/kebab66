@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kashi Kebab Sagasti (Arrandi) - Turca | Gestión Comercial y Pedidos Online</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- Barra superior de estado comercial y Simulador de Hora -->
+  <div class="topbar no-print">
+    <div class="container topbar-inner">
+      <div class="topbar-status-group">
+        <span id="storeStatusBadge" class="status-pill status-open">
+          <span class="status-dot"></span>
+          <span id="storeStatusText">Abierto ahora</span>
+        </span>
+        <span class="clock-display" id="activeClockDisplay" title="Hora activa del sistema">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <strong id="clockTimeValue">--:--</strong>
+          <span id="clockModeTag" class="clock-mode-tag">Hora real</span>
+        </span>
+        <span id="closingSoonBadge" class="closing-soon-pill hidden">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span id="closingSoonText">¡Últimos pedidos! Cerramos pronto</span>
+        </span>
+      </div>
+
+      <div class="clock-simulator">
+        <span class="sim-label">Simulador de Hora:</span>
+        <input type="time" id="simTimeInput" class="sim-time-input" aria-label="Simular hora" />
+        <div class="sim-presets">
+          <button type="button" class="btn-chip" data-sim-time="11:30" title="Probar horario cerrado">11:30</button>
+          <button type="button" class="btn-chip" data-sim-time="21:30" title="Probar horario abierto">21:30</button>
+          <button type="button" class="btn-chip" data-sim-time="00:40" title="Probar cierre próximo">00:40</button>
+          <button type="button" class="btn-chip btn-chip-reset" id="resetRealClockBtn">Hora real</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Banner y Encabezado Corporativo -->
+  <header class="hero-header no-print">
+    <div class="hero-bg">
+      <img
+        src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1600&q=80"
+        alt="Especialidades turcas a la parrilla Kashi Kebab Sagasti"
+        class="hero-bg-img"
+        onerror="this.style.display='none'"
+      />
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="container hero-content">
+      <div class="brand-lockup">
+        <div class="kashi-logo" aria-label="Logotipo KASHI">
+          <svg width="42" height="42" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="12" fill="#F97316"/>
+            <path d="M24 9C24 9 32 16.2 32 23.5C32 27.9 28.4 31.5 24 31.5C19.6 31.5 16 27.9 16 23.5C16 20.6 17.5 17.6 19.6 15.2C19.8 18.2 21.7 19.8 23.4 20.2C22.4 16.8 23.1 12.2 24 9Z" fill="#FFFFFF"/>
+            <path d="M15 35.5H33" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            <path d="M18 39.5H30" stroke="#FED7AA" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+          <div class="kashi-wordmark">
+            <span class="kashi-brand">KASHI</span>
+            <span class="kashi-sub">KEBAB &amp; TURCA</span>
+          </div>
+        </div>
+
+        <div class="restaurant-info">
+          <span class="hero-tag">Cocina Turca Artesanal · Barakaldo</span>
+          <h1>Kashi Kebab Sagasti (Arrandi) - Turca</h1>
+          <div class="hero-meta">
+            <span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Calle Arrandi 25, Barakaldo, 48901
+            </span>
+            <span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Horario: 13:00 a 01:00 (Todos los días)
+            </span>
+            <span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              944 123 456
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-highlights">
+        <div class="highlight-card">
+          <span class="highlight-label">Recogida en local</span>
+          <strong>15 min</strong>
+        </div>
+        <div class="highlight-card">
+          <span class="highlight-label">Envío Barakaldo</span>
+          <strong>30–40 min · 2,00 €</strong>
+        </div>
+        <div class="highlight-card">
+          <span class="highlight-label">Cupón activo</span>
+          <strong><code>KASHI10</code> (-10%)</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación principal -->
+    <nav class="main-nav" aria-label="Secciones de gestión">
+      <div class="container nav-tabs">
+        <button type="button" class="nav-tab active" data-tab="menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+          <span>Carta y Pedidos</span>
+          <span id="navCartCount" class="nav-badge">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="warehouse">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Gestión de Almacén (Stock)</span>
+          <span id="navLowStockCount" class="nav-badge badge-warning hidden">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="invoices">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>Historial de Facturas</span>
+          <span id="navInvoicesCount" class="nav-badge">0</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Banner dinámico de horario comercial -->
+  <div id="scheduleAlertBanner" class="schedule-banner hidden no-print">
+    <div class="container schedule-banner-inner">
+      <div id="scheduleAlertIcon" class="schedule-banner-icon"></div>
+      <div class="schedule-banner-text">
+        <strong id="scheduleAlertTitle"></strong>
+        <p id="scheduleAlertDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <main class="container main-container no-print">
+    <!-- SECCIÓN 1: CARTA Y PEDIDOS -->
+    <section id="tab-menu" class="tab-panel active">
+      <div class="store-layout">
+        <!-- Columna izquierda: Filtros + Carta -->
+        <div class="menu-column">
+          <div class="menu-controls">
+            <div class="category-tabs" id="categoryFilterBar" role="tablist" aria-label="Categorías de la carta">
+              <!-- Renderizado dinámicamente -->
+            </div>
+            <div class="search-box">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="search" id="menuSearchInput" placeholder="Buscar plato, ingrediente o bebida..." />
+            </div>
+          </div>
+
+          <div class="menu-section-header">
+            <div>
+              <h2 id="activeCategoryTitle">Toda la Carta</h2>
+              <p id="activeCategorySubtitle" class="muted-text">Precios base sin IVA · 10% IVA hostelería aplicado en caja</p>
+            </div>
+            <span id="visibleDishCount" class="count-pill">0 platos</span>
+          </div>
+
+          <div id="menuGrid" class="menu-grid">
+            <!-- Tarjetas de producto renderizadas dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Columna derecha: Carrito inteligente y Caja -->
+        <aside class="cart-column" id="cartSidebar" aria-label="Carrito de compra">
+          <div class="cart-card">
+            <div class="cart-header">
+              <div>
+                <h3>Tu Pedido</h3>
+                <span class="muted-text" id="cartItemSummary">0 artículos</span>
+              </div>
+              <button type="button" id="clearCartBtn" class="btn-text-danger hidden">Vaciar</button>
+            </div>
+
+            <!-- Modalidad de entrega -->
+            <div class="delivery-toggle" role="radiogroup" aria-label="Modalidad de pedido">
+              <button type="button" class="delivery-option active" data-delivery="pickup">
+                <strong>Recoger en local</strong>
+                <span>15 min · Gratis</span>
+              </button>
+              <button type="button" class="delivery-option" data-delivery="delivery">
+                <strong>Pide a domicilio</strong>
+                <span>30–40 min · +2,00 €</span>
+              </button>
+            </div>
+
+            <div id="deliveryAddressBox" class="delivery-fields hidden">
+              <label class="field-label">
+                Dirección en Barakaldo *
+                <input type="text" id="customerAddressInput" placeholder="Ej. Herriko Plaza 4, 2ºB" />
+              </label>
+              <div class="delivery-min-notice" id="deliveryMinNotice">
+                Pedido mínimo a domicilio: <strong>10,00 €</strong> (productos).
+              </div>
+            </div>
+
+            <div class="customer-name-box">
+              <label class="field-label">
+                Nombre del cliente (opcional)
+                <input type="text" id="customerNameInput" placeholder="Para el ticket / recogida" />
+              </label>
+            </div>
+
+            <!-- Lista de productos en el carrito -->
+            <div id="cartItemsList" class="cart-items">
+              <!-- Items o estado vacío -->
+            </div>
+
+            <!-- Cupón y Selector de IVA -->
+            <div class="cart-extras">
+              <div class="coupon-row">
+                <input type="text" id="couponInput" placeholder="Código promo (ej. KASHI10)" />
+                <button type="button" id="applyCouponBtn" class="btn-secondary">Aplicar</button>
+              </div>
+              <div id="couponFeedback" class="coupon-feedback">
+                Prueba <button type="button" class="coupon-hint-btn" data-coupon="KASHI10">KASHI10</button> (-10% base)
+              </div>
+
+              <div class="tax-selector-row">
+                <label for="ivaRateSelect">Tipo de IVA (España):</label>
+                <select id="ivaRateSelect">
+                  <option value="10" selected>10% (Hostelería - Reducido)</option>
+                  <option value="21">21% (IVA General)</option>
+                  <option value="4">4% (Superreducido)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Desglose fiscal en tiempo real -->
+            <div class="tax-breakdown" id="cartSummaryBox">
+              <div class="summary-line">
+                <span>Subtotal productos (sin IVA)</span>
+                <span id="summarySubtotal">0,00 €</span>
+              </div>
+              <div class="summary-line discount-line hidden" id="summaryDiscountRow">
+                <span id="summaryDiscountLabel">Descuento cupón</span>
+                <span id="summaryDiscount">-0,00 €</span>
+              </div>
+              <div class="summary-line">
+                <span>Base Imponible</span>
+                <strong id="summaryBaseImponible">0,00 €</strong>
+              </div>
+              <div class="summary-line">
+                <span id="summaryIvaLabel">IVA (10%)</span>
+                <span id="summaryIvaAmount">0,00 €</span>
+              </div>
+              <div class="summary-line hidden" id="summaryShippingRow">
+                <span>Envío a domicilio (Barakaldo)</span>
+                <span id="summaryShipping">2,00 €</span>
+              </div>
+              <div class="summary-total">
+                <span>Total a pagar</span>
+                <strong id="summaryTotal">0,00 €</strong>
+              </div>
+            </div>
+
+            <!-- Método de pago y calculadora de cambio -->
+            <div class="payment-section">
+              <span class="section-mini-title">Método de pago</span>
+              <div class="payment-methods">
+                <button type="button" class="payment-btn active" data-payment="cash">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                  Efectivo
+                </button>
+                <button type="button" class="payment-btn" data-payment="card">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  Tarjeta
+                </button>
+              </div>
+
+              <div id="cashCalculatorBox" class="cash-calculator">
+                <div class="cash-quick-btns">
+                  <span class="muted-text">Entrega:</span>
+                  <button type="button" class="btn-chip" data-cash="10">10 €</button>
+                  <button type="button" class="btn-chip" data-cash="20">20 €</button>
+                  <button type="button" class="btn-chip" data-cash="50">50 €</button>
+                  <button type="button" class="btn-chip" id="exactCashBtn">Exacto</button>
+                </div>
+                <div class="cash-input-row">
+                  <label>
+                    Importe recibido (€)
+                    <input type="number" id="cashGivenInput" min="0" step="0.50" placeholder="20.00" />
+                  </label>
+                  <div class="cash-change-display">
+                    <span>Cambio:</span>
+                    <strong id="cashChangeAmount">0,00 €</strong>
+                  </div>
+                </div>
+                <p id="cashWarning" class="field-error hidden">El importe recibido es inferior al total a pagar.</p>
+              </div>
+            </div>
+
+            <!-- Opción si está cerrado -->
+            <div id="closedScheduleBox" class="closed-order-box hidden">
+              <p class="closed-box-msg">
+                <strong>Local cerrado ahora</strong> (horario 13:00–01:00). El pago inmediato está desactivado.
+              </p>
+              <label class="checkbox-row">
+                <input type="checkbox" id="scheduleForOpeningCheck" />
+                <span>Programar pedido para apertura (13:00)</span>
+              </label>
+            </div>
+
+            <button type="button" id="checkoutBtn" class="btn-primary btn-checkout" disabled>
+              Confirmar Pedido y Generar Ticket
+            </button>
+            <p id="checkoutValidationMsg" class="checkout-validation hidden"></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: GESTIÓN DE ALMACÉN (STOCK) -->
+    <section id="tab-warehouse" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Gestión de Almacén e Inventario</h2>
+          <p class="muted-text">Control en tiempo real. Cada pedido y menú combo descuenta automáticamente los ingredientes y bebidas.</p>
+        </div>
+        <button type="button" id="resetDataBtn" class="btn-outline-danger">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Restaurar valores iniciales
+        </button>
+      </div>
+
+      <!-- KPIs de Almacén -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">Referencias en Carta</span>
+          <strong class="kpi-value" id="kpiTotalProducts">0</strong>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Unidades Totales en Stock</span>
+          <strong class="kpi-value" id="kpiTotalUnits">0</strong>
+        </div>
+        <div class="kpi-card kpi-amber">
+          <span class="kpi-label">Stock Bajo (&lt; 5 uds.)</span>
+          <strong class="kpi-value" id="kpiLowStock">0</strong>
+        </div>
+        <div class="kpi-card kpi-red">
+          <span class="kpi-label">Productos Agotados</span>
+          <strong class="kpi-value" id="kpiOutOfStock">0</strong>
+        </div>
+      </div>
+
+      <div class="warehouse-grid">
+        <!-- Tabla de stock -->
+        <div class="card-surface warehouse-table-card">
+          <div class="table-toolbar">
+            <div class="filter-pills" id="stockFilterBar">
+              <button type="button" class="btn-chip active" data-stock-filter="all">Todos</button>
+              <button type="button" class="btn-chip" data-stock-filter="low">Stock bajo / Agotados</button>
+              <button type="button" class="btn-chip" data-stock-filter="ok">Stock óptimo</button>
+            </div>
+            <input type="search" id="stockSearchInput" class="toolbar-search" placeholder="Filtrar producto..." />
+          </div>
+
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Categoría</th>
+                  <th>Precio base (sin IVA)</th>
+                  <th>Stock actual</th>
+                  <th>Estado</th>
+                  <th>Reposición rápida</th>
+                </tr>
+              </thead>
+              <tbody id="warehouseTableBody">
+                <!-- Filas renderizadas dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Formulario para crear nuevos platos -->
+        <div class="card-surface new-dish-card">
+          <h3>Añadir Nuevo Plato / Producto</h3>
+          <p class="muted-text">Se incorporará inmediatamente a la carta online y al control de almacén.</p>
+
+          <form id="newDishForm" class="dish-form">
+            <label class="field-label">
+              Nombre del plato *
+              <input type="text" id="newDishName" required placeholder="Ej. Dürüm Especial Queso" />
+            </label>
+
+            <div class="form-row-2">
+              <label class="field-label">
+                Categoría *
+                <select id="newDishCategory" required>
+                  <option value="Platos Kebab">Platos Kebab</option>
+                  <option value="Dürüms y Pitas">Dürüms y Pitas</option>
+                  <option value="Pizzas Turcas (Lahmacun)">Pizzas Turcas (Lahmacun)</option>
+                  <option value="Raciones y Extras">Raciones y Extras</option>
+                  <option value="Bebidas">Bebidas</option>
+                </select>
+              </label>
+
+              <label class="field-label">
+                Precio base sin IVA (€) *
+                <input type="number" id="newDishPrice" required min="0.50" step="0.10" placeholder="7.50" />
+              </label>
+            </div>
+
+            <div class="form-row-2">
+              <label class="field-label">
+                Stock inicial (uds.) *
+                <input type="number" id="newDishStock" required min="0" step="1" value="15" />
+              </label>
+
+              <label class="field-label">
+                Etiquetas (separadas por coma)
+                <input type="text" id="newDishTags" placeholder="Gluten, Lácteos, Picante" />
+              </label>
+            </div>
+
+            <label class="field-label">
+              URL de imagen (opcional — usa imagen gastronómica por defecto si se deja vacío)
+              <input type="url" id="newDishImage" placeholder="https://images.unsplash.com/..." />
+            </label>
+
+            <label class="field-label">
+              Descripción de ingredientes *
+              <textarea id="newDishDesc" rows="2" required placeholder="Carne asada al corte, pan fino turco y verduras frescas..."></textarea>
+            </label>
+
+            <label class="checkbox-row">
+              <input type="checkbox" id="newDishCustomizable" checked />
+              <span>Habilitar Configurador de Menú (carne, verduras, salsas y combo)</span>
+            </label>
+
+            <button type="submit" class="btn-primary">Guardar y Publicar en Carta</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: HISTORIAL DE FACTURAS Y CIERRE DE CAJA -->
+    <section id="tab-invoices" class="tab-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Historial de Ventas y Cierre de Caja</h2>
+          <p class="muted-text">Resumen financiero fiscal, arqueo por método de pago y descarga de facturas emitidas.</p>
+        </div>
+      </div>
+
+      <!-- Métricas financieras -->
+      <div class="kpi-grid kpi-grid-4">
+        <div class="kpi-card kpi-dark">
+          <span class="kpi-label">Total Recaudado (IVA incl.)</span>
+          <strong class="kpi-value" id="finTotalRevenue">0,00 €</strong>
+          <span class="kpi-sub" id="finPaymentSplit">Efectivo: 0,00 € · Tarjeta: 0,00 €</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">IVA Acumulado a Declarar</span>
+          <strong class="kpi-value" id="finTotalIva">0,00 €</strong>
+          <span class="kpi-sub" id="finBaseImponible">Base imponible: 0,00 €</span>
+        </div>
+        <div class="kpi-card kpi-orange">
+          <span class="kpi-label">Plato Estrella Más Vendido</span>
+          <strong class="kpi-value kpi-value-sm" id="finTopDish">—</strong>
+          <span class="kpi-sub" id="finTopDishUnits">Sin ventas registradas aún</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Pedidos Realizados</span>
+          <strong class="kpi-value" id="finOrderCount">0</strong>
+          <span class="kpi-sub" id="finScheduledCount">0 programados</span>
+        </div>
+      </div>
+
+      <!-- Listado de facturas -->
+      <div class="card-surface">
+        <div class="table-toolbar">
+          <div class="filter-pills" id="invoiceFilterBar">
+            <button type="button" class="btn-chip active" data-invoice-filter="all">Todas</button>
+            <button type="button" class="btn-chip" data-invoice-filter="cash">Efectivo</button>
+            <button type="button" class="btn-chip" data-invoice-filter="card">Tarjeta</button>
+            <button type="button" class="btn-chip" data-invoice-filter="delivery">A domicilio</button>
+          </div>
+          <input type="search" id="invoiceSearchInput" class="toolbar-search" placeholder="Buscar nº factura o cliente..." />
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nº Factura</th>
+                <th>Fecha y Hora</th>
+                <th>Cliente / Modalidad</th>
+                <th>Pago</th>
+                <th>Base Imp.</th>
+                <th>IVA</th>
+                <th>Total</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody">
+              <!-- Facturas dinámicas -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Botón flotante del carrito en móvil -->
+  <button type="button" id="mobileCartFab" class="mobile-cart-fab no-print hidden">
+    <span>Ver Pedido (<strong id="mobileFabCount">0</strong>)</span>
+    <strong id="mobileFabTotal">0,00 €</strong>
+  </button>
+
+  <!-- MODAL 1: CONFIGURADOR INTERACTIVO DE MENÚ (4 PASOS) -->
+  <div id="configuratorModal" class="modal-backdrop hidden no-print" role="dialog" aria-modal="true" aria-labelledby="cfgDishTitle">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="cfg-header-info">
+          <span class="cfg-badge" id="cfgCategoryLabel">Categoría</span>
+          <h3 id="cfgDishTitle">Configura tu plato</h3>
+          <p id="cfgDishDesc" class="muted-text"></p>
+        </div>
+        <button type="button" class="modal-close" id="closeConfiguratorBtn" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body cfg-body">
+        <!-- Paso 1: Carne -->
+        <div class="cfg-step">
+          <div class="cfg-step-title">
+            <span class="step-num">1</span>
+            <div>
+              <h4>Tipo de carne</h4>
+              <span class="muted-text">Elige la proteína principal</span>
+            </div>
+          </div>
+          <div class="cfg-options-grid" id="cfgMeatOptions"></div>
+        </div>
+
+        <!-- Paso 2: Verduras e ingredientes -->
+        <div class="cfg-step">
+          <div class="cfg-step-title">
+            <span class="step-num">2</span>
+            <div>
+              <h4>Ingredientes y verduras</h4>
+              <span class="muted-text">Personaliza los acompañamientos frescos</span>
+            </div>
+          </div>
+          <div class="cfg-options-grid" id="cfgVeggieOptions"></div>
+        </div>
+
+        <!-- Paso 3: Salsas -->
+        <div class="cfg-step">
+          <div class="cfg-step-title">
+            <span class="step-num">3</span>
+            <div>
+              <h4>Salsas (selección múltiple)</h4>
+              <span class="muted-text">Combínalas a tu gusto o elige sin salsa</span>
+            </div>
+          </div>
+          <div class="cfg-options-grid" id="cfgSauceOptions"></div>
+        </div>
+
+        <!-- Paso 4: Combo Menú -->
+        <div class="cfg-step">
+          <div class="cfg-step-title">
+            <span class="step-num">4</span>
+            <div>
+              <h4>¿Lo quieres en Menú?</h4>
+              <span class="muted-text">Añade Ración de Patatas Fritas + Bebida a elegir por +2,50 €</span>
+            </div>
+          </div>
+          <div class="combo-choice-row" id="cfgComboModeOptions">
+            <label class="choice-card active">
+              <input type="radio" name="comboMode" value="solo" checked />
+              <div>
+                <strong>Solo plato</strong>
+                <span>Sin suplemento</span>
+              </div>
+            </label>
+            <label class="choice-card" id="comboOptionCard">
+              <input type="radio" name="comboMode" value="menu" id="comboRadioMenu" />
+              <div>
+                <strong>Hacerlo Menú (+2,50 €)</strong>
+                <span id="comboFriesStockLabel">Incluye Patatas Fritas + Bebida</span>
+              </div>
+            </label>
+          </div>
+
+          <div id="cfgDrinkSelectorBox" class="drink-selector-box hidden">
+            <span class="section-mini-title">Elige la bebida de tu Menú:</span>
+            <div class="cfg-options-grid" id="cfgDrinkOptions"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer cfg-footer">
+        <div class="cfg-price-preview">
+          <span>Precio unitario (sin IVA):</span>
+          <strong id="cfgUnitPrice">0,00 €</strong>
+        </div>
+        <div class="cfg-footer-actions">
+          <button type="button" class="btn-secondary" id="cancelConfiguratorBtn">Cancelar</button>
+          <button type="button" class="btn-primary" id="confirmConfiguratorBtn">Añadir al Pedido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: TICKET / FACTURA VISUAL Y DESCARGA -->
+  <div id="ticketModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="ticketModalTitle">
+    <div class="modal-card modal-ticket">
+      <div class="modal-header no-print">
+        <h3 id="ticketModalTitle">Ticket y Factura Simplificada</h3>
+        <button type="button" class="modal-close" id="closeTicketModalBtn" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body ticket-modal-body">
+        <div id="ticketPrintArea" class="thermal-ticket">
+          <!-- Ticket generado dinámicamente -->
+        </div>
+      </div>
+
+      <div class="modal-footer ticket-actions no-print">
+        <button type="button" id="downloadPdfBtn" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar PDF
+        </button>
+        <button type="button" id="downloadTxtBtn" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Descargar TXT
+        </button>
+        <button type="button" id="printTicketBtn" class="btn-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir Ticket
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de notificaciones Toast -->
+  <div id="toastContainer" class="toast-container no-print" aria-live="polite"></div>
+</body>
+</html>
